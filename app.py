@@ -1,4 +1,6 @@
+
 from flask import Flask, request, jsonify, render_template, session, redirect
+from werkzeug.security import generate_password_hash, check_password_hash
 from ai_engine import evaluate_answer
 import mysql.connector
 
@@ -92,10 +94,10 @@ def login():
     try:
         db = get_db()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM students WHERE email=%s AND password=%s", (email, password))
-        student = cursor.fetchone()
+   cursor.execute("SELECT * FROM students WHERE email=%s", (email,))
+student = cursor.fetchone()
         db.close()
-        if student:
+        if student and check_password_hash(student["password"], password):
             session.clear()
             session["student_id"] = int(student["id"])
             session["student_name"] = student["name"]
@@ -121,7 +123,7 @@ def signup():
         db.close()
         return jsonify({"success": False, "message": "Email already registered. Please login."})
     cursor.execute("INSERT INTO students (name, email, password) VALUES (%s, %s, %s)",
-                   (name, email, password))
+               (name, email, generate_password_hash(password)))
     db.commit()
     db.close()
     return jsonify({"success": True})
