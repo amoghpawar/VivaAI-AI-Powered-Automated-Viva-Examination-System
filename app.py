@@ -37,6 +37,11 @@ HINTS = {
     "Joins":          "Combines rows from two tables + based on common column + types INNER LEFT RIGHT FULL",
     "Indexing":       "Speeds up data retrieval + separate pointer structure + like a book index for rows",
     "Transactions":   "Group of operations as one unit + ACID = Atomicity Consistency Isolation Durability",
+    "ER Model":       "Entities = real world objects + Attributes = properties + Relationships = how entities connect",
+    "Views":          "Virtual table + based on SELECT query + does not store data + simplifies complex queries",
+    "Triggers":       "Auto executes on INSERT UPDATE DELETE + used for audit logs + enforces business rules",
+    "Concurrency":    "Multiple users access same data + problems are dirty read lost update + solved by locking",
+    "Stored Proc":    "Precompiled SQL block + stored in database + called by name + faster than raw queries",
 }
 
 DIFFICULTY_HINTS = {
