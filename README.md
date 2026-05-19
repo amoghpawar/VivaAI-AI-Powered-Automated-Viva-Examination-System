@@ -43,7 +43,12 @@ VivaAI is a web-based viva examination system that uses NLP to evaluate student 
 6. Session ends after 5 questions with a performance summary
 
 ## Screenshots
-Add screenshots here
+<img width="1918" height="910" alt="REPORT" src="https://github.com/user-attachments/assets/43502665-9ce5-49eb-8e6a-ffb72b3a8c69" />
+<img width="1911" height="911" alt="LOGIN PAGE" src="https://github.com/user-attachments/assets/7a5bde55-9441-4cba-a037-b03f9098b257" />
+<img width="1077" height="701" alt="ANS CLASSIFICATION" src="https://github.com/user-attachments/assets/1bc63b59-d288-45ec-857c-47f6780d2b1e" />
+
+
+
 
 ## License
 MIT License — see LICENSE file
