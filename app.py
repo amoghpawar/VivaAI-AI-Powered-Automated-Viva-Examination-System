@@ -50,19 +50,6 @@ DIFFICULTY_HINTS = {
     "Hard":   "| Level: Explain working + tradeoffs",
 }
 
-
-DIFFICULTY_HINTS = {
-    "Easy":   "| Level: Basic definition",
-    "Medium": "| Level: Include real world example",
-    "Hard":   "| Level: Explain working + tradeoffs",
-}
-
-HINTS_OLD = {
-    "Easy":   "This is a basic concept. Think about the definition.",
-    "Medium": "Think about real world examples and how this concept is applied.",
-    "Hard":   "Think about the internal working, tradeoffs, and edge cases of this concept.",
-}
-
 # ─── PAGES ────────────────────────────────────────────
 @app.route("/")
 def index():
