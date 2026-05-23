@@ -86,8 +86,8 @@ def login():
     try:
         db = get_db()
         cursor = db.cursor(dictionary=True)
-   cursor.execute("SELECT * FROM students WHERE email=%s", (email,))
-student = cursor.fetchone()
+        cursor.execute("SELECT * FROM students WHERE email=%s", (email,))
+        student = cursor.fetchone()
         db.close()
         if student and check_password_hash(student["password"], password):
             session.clear()
