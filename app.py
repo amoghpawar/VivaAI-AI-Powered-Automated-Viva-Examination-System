@@ -153,6 +153,9 @@ def get_hint():
     row = cursor.fetchone()
     db.close()
 
+    if not row:
+        return jsonify({"hint": "Think about the definition, a real world example, and how it works."})
+
     topic_hint = HINTS.get(row["topic"], "Key concept → think about definition → real world example → how it works")
     diff_hint = DIFFICULTY_HINTS.get(row["difficulty"], "")
 
