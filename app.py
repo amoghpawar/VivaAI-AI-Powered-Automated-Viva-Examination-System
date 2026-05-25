@@ -120,6 +120,25 @@ def signup():
     db.close()
     return jsonify({"success": True})
 
+@app.route("/api/results", methods=["GET"])
+def get_results():
+    student_id = session.get("student_id")
+    if not student_id:
+        return jsonify({"success": False, "message": "Not logged in."})
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT q.topic, q.difficulty, a.classification, a.score
+        FROM answers a
+        JOIN questions q ON a.question_id = q.id
+        WHERE a.student_id = %s
+        ORDER BY a.submitted_at DESC
+        LIMIT 10
+    """, (student_id,))
+    results = cursor.fetchall()
+    db.close()
+    return jsonify({"success": True, "results": results})
+
 @app.route("/api/logout")
 def logout():
     session.clear()
