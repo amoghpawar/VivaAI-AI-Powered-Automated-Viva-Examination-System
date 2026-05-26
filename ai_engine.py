@@ -2,7 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import re
 
-# Common ML synonyms - expands student's words to match ideal answer keywords
+# Common ML and SQL synonyms - expands student's words to match ideal answer keywords
 SYNONYMS = {
     'ai': 'artificial intelligence',
     'artificial intelligence': 'ai',
@@ -34,6 +34,17 @@ SYNONYMS = {
     'weight': 'parameter coefficient weight',
     'bias': 'bias error underfitting',
     'variance': 'variance overfitting complexity',
+    # DBMS
+    'database': 'dbms storage data management',
+    'table': 'relation rows columns records',
+    'query': 'sql select retrieve fetch',
+    'key': 'primary foreign unique identifier',
+    'join': 'combine merge relate tables',
+    'index': 'indexing fast retrieval pointer',
+    'normal': 'normalization redundancy 1nf 2nf 3nf',
+    'transaction': 'acid atomicity consistency isolation durability',
+    'trigger': 'auto execute insert update delete',
+    'procedure': 'stored proc precompiled reusable sql',
 }
 
 def expand_text(text):
