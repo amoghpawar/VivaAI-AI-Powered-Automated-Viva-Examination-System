@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, render_template, session, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 from ai_engine import evaluate_answer
 import mysql.connector
+import re
 
 app = Flask(__name__)
 app.secret_key = "vivaai_2024_secret"
@@ -185,6 +186,8 @@ def get_hint():
 def submit_answer():
     data = request.get_json()
     student_answer = data.get("answer", "")
+    student_answer = re.sub(r'<[^>]+>', '', student_answer)  # strip HTML tags
+    student_answer = student_answer.strip()[:2000]  # limit to 2000 chars
     qid = data.get("question_id")
     hint_used = data.get("hint_used", False)
     subject = session.get("subject", "ML")
