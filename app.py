@@ -9,12 +9,15 @@ app = Flask(__name__)
 app.secret_key = "vivaai_2024_secret"
 
 def get_db():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="root",  # change if different
-        database="vivaai"
-    )
+    try:
+        return mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="root",
+            database="vivaai"
+        )
+    except mysql.connector.Error as e:
+        raise ConnectionError(f"Database connection failed: {str(e)}")
 
 # Smart hints based on question topic and difficulty
 HINTS = {
@@ -243,3 +246,7 @@ def submit_answer():
 
 if __name__ == "__main__":
     app.run(debug=True)
+ 
+@app.errorhandler(ConnectionError)
+def db_connection_error(e):
+    return jsonify({"success": False, "message": "Service temporarily unavailable. Please try again later."}), 503
