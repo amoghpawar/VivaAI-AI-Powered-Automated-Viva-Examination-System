@@ -1,4 +1,4 @@
-
+import time
 from flask import Flask, request, jsonify, render_template, session, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 from ai_engine import evaluate_answer
@@ -187,6 +187,13 @@ def get_hint():
 
 @app.route("/submit_answer", methods=["POST"])
 def submit_answer():
+    # Rate limiting — max 1 submission per 2 seconds per student
+    last_submit = session.get("last_submit_time", 0)
+    current_time = time.time()
+    if current_time - last_submit < 2:
+        return jsonify({"success": False, "message": "Please wait before submitting again."}), 429
+    session["last_submit_time"] = current_time
+
     data = request.get_json()
     student_answer = data.get("answer", "")
     student_answer = re.sub(r'<[^>]+>', '', student_answer)  # strip HTML tags
