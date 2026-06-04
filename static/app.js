@@ -266,6 +266,13 @@ function restartViva() {
     location.reload();
 }
 
+// Ctrl+Enter to submit
+document.addEventListener("keydown", function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        submitAnswer();
+    }
+});
+
 // Mic
 let recognition = null;
 let isRecording = false;
