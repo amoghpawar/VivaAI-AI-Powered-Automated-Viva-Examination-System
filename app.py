@@ -21,37 +21,51 @@ def get_db():
 
 # Smart hints based on question topic and difficulty
 HINTS = {
+
     # ML
     "Intro":          "AI branch + learns patterns from data + makes predictions without explicit programming",
+    "Basics":         "Definition + purpose + working + real-world example",
     "Types":          "Supervised = labeled data | Unsupervised = unlabeled data | Reinforcement = reward based learning",
-    "Dataset":        "Structured collection of data + has features and labels + used to train and test models",
-    "Prediction":     "Trained model + new input data + estimates output like class or number",
-    "Overfitting":    "Model memorizes training data + learns noise + fails on new unseen data",
-    "Underfitting":   "Model too simple + misses patterns + poor performance on both train and test",
-    "Regression":     "Predicts continuous values + like price or temperature + linear regression is simplest",
-    "Classification": "Predicts categories or classes + like spam or not spam + uses labeled training data",
-    "NN":             "Brain inspired model + input hidden output layers + learns using weights and backpropagation",
-    "DL":             "Many layered neural network + auto feature learning + needs large data and compute power",
-    "GD":             "Optimization algorithm + minimizes loss function + updates weights opposite to gradient",
+    "Dataset":        "Features = inputs + Labels = outputs + train/test split",
+    "Prediction":     "Trained model + new input data + estimates output",
+    "Overfitting":    "Learns noise + high train accuracy + poor test performance",
+    "Underfitting":   "Model too simple + misses important patterns",
+    "Regression":     "Predict continuous values like price or temperature",
+    "Classification": "Predict categories like spam/not spam or cat/dog",
+    "Evaluation":     "Accuracy + Precision + Recall + F1 Score + Confusion Matrix",
+    "NN":             "Input layer + Hidden layers + Output layer + weights",
+    "DL":             "Deep neural networks + automatic feature learning",
+    "GD":             "Gradient descent minimizes loss by updating weights",
+
     # DBMS
-    "Keys":           "Primary key = unique + not null | Foreign key = links two tables + referential integrity",
-    "SQL":            "Structured Query Language + used to create retrieve update delete data in relational databases",
-    "Tables":         "Stores data in rows and columns + table is physical + view is virtual based on query",
-    "Normalization":  "Removes redundancy + organizes tables + follows 1NF 2NF 3NF rules for data integrity",
-    "Joins":          "Combines rows from two tables + based on common column + types INNER LEFT RIGHT FULL",
-    "Indexing":       "Speeds up data retrieval + separate pointer structure + like a book index for rows",
-    "Transactions":   "Group of operations as one unit + ACID = Atomicity Consistency Isolation Durability",
-    "ER Model":       "Entities = real world objects + Attributes = properties + Relationships = how entities connect",
-    "Views":          "Virtual table + based on SELECT query + does not store data + simplifies complex queries",
-    "Triggers":       "Auto executes on INSERT UPDATE DELETE + used for audit logs + enforces business rules",
-    "Concurrency":    "Multiple users access same data + problems are dirty read lost update + solved by locking",
-    "Stored Proc":    "Precompiled SQL block + stored in database + called by name + faster than raw queries",
+    "Keys":           "Primary key = unique + not null | Foreign key = links two tables",
+    "SQL":            "DDL + DML + DCL + TCL commands",
+    "Tables":         "Stores data in rows and columns + physical storage",
+    "Normalization":  "Reduce redundancy + organize tables + 1NF 2NF 3NF",
+    "Joins":          "Combine rows from multiple tables using common columns",
+    "Indexing":       "Speeds up data retrieval using index structures",
+    "Transactions":   "ACID = Atomicity Consistency Isolation Durability",
+    "ER Model":       "Entities + Attributes + Relationships",
+    "Views":          "Virtual table based on SELECT query",
+    "Triggers":       "Automatically executes on INSERT UPDATE DELETE",
+    "Concurrency":    "Multiple users access data simultaneously + locking",
+    "Stored Proc":    "Reusable SQL code stored and executed in database",
+
+    # OS
+    "Process":         "Program in execution + PCB + process states",
+    "Memory":          "RAM management + paging + virtual memory",
+    "Scheduling":      "CPU allocation + FCFS + SJF + Round Robin",
+    "Deadlock":        "Circular waiting + prevention + avoidance",
+    "Synchronization": "Semaphore + Mutex + Critical Section",
+    "FileSystem":      "Organizes files and directories on storage devices",
+    "Kernel":          "Core of OS + manages hardware and system calls",
+    "IPC":             "Inter-process communication using pipes, shared memory, sockets"
 }
 
 DIFFICULTY_HINTS = {
-    "Easy":   "| Level: Basic definition",
-    "Medium": "| Level: Include real world example",
-    "Hard":   "| Level: Explain working + tradeoffs",
+    "Easy":   "| Level: Define the concept clearly",
+    "Medium": "| Level: Explain with example and working",
+    "Hard":   "| Level: Explain working + advantages + disadvantages + trade-offs"
 }
 
 # ─── PAGES ────────────────────────────────────────────
