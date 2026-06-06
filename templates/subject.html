@@ -9,7 +9,7 @@
     .card { background: #1a1a2e; padding: 2.5rem; border-radius: 14px; width: 500px; max-width: 95vw; box-shadow: 0 0 40px #0008; text-align: center; }
     h1 { color: #7eb8f7; margin-bottom: 0.5rem; }
     .welcome { color: #888; margin-bottom: 2rem; font-size: 0.95rem; }
-    .subjects { display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; }
+    .subjects { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; }
     .subject-card { background: #111; border: 2px solid #333; border-radius: 12px; padding: 2rem 1.5rem; cursor: pointer; width: 200px; transition: all 0.2s; }
     .subject-card:hover { border-color: #3a86ff; background: #161630; transform: translateY(-3px); }
     .subject-card .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
@@ -38,6 +38,11 @@
       <div class="icon">💻</div>
       <h3>Operating System</h3>
       <p>Processes, Memory, Scheduling & Deadlocks</p>
+    </div>
+    <div class="subject-card" onclick="selectSubject('CN')">
+      <div class="icon">🌐</div>
+      <h3>Computer Networks</h3>
+      <p>OSI, TCP/IP, Protocols & Security</p>
     </div>
   </div>
   <p class="logout" onclick="window.location='/api/logout'">Logout</p>
