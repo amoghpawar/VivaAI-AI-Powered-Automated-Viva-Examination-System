@@ -1,6 +1,7 @@
 import os
 import time
 import re
+from datetime import timedelta
 from dotenv import load_dotenv
 load_dotenv()
 from flask import Flask, request, jsonify, render_template, session, redirect
@@ -21,6 +22,7 @@ app.config.update(
     SESSION_COOKIE_SECURE=True,     # only sent over HTTPS
     SESSION_COOKIE_HTTPONLY=True,   # JS can't read the cookie
     SESSION_COOKIE_SAMESITE='Lax',  # basic CSRF mitigation
+    PERMANENT_SESSION_LIFETIME=timedelta(hours=2),  # auto-logout after 2 hours idle
 )
 
 # Rate limiting — protects login/signup from brute-force attempts
@@ -144,6 +146,7 @@ def login():
         db.close()
         if student and check_password_hash(student["password"], password):
             session.clear()
+            session.permanent = True  # enables PERMANENT_SESSION_LIFETIME timeout
             session["student_id"] = int(student["id"])
             session["student_name"] = student["name"]
             session.modified = True
