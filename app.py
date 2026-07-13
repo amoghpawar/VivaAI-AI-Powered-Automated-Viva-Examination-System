@@ -8,9 +8,23 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from ai_engine import evaluate_answer
 import psycopg2
 import psycopg2.extras
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "vivaai_2024_secret")
+
+# Fail loudly if SECRET_KEY is missing — never fall back to a public default
+app.secret_key = os.environ["SECRET_KEY"]
+
+# Secure session cookies
+app.config.update(
+    SESSION_COOKIE_SECURE=True,     # only sent over HTTPS
+    SESSION_COOKIE_HTTPONLY=True,   # JS can't read the cookie
+    SESSION_COOKIE_SAMESITE='Lax',  # basic CSRF mitigation
+)
+
+# Rate limiting — protects login/signup from brute-force attempts
+limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"])
 
 def get_db():
     try:
@@ -20,6 +34,9 @@ def get_db():
         )
     except Exception as e:
         raise ConnectionError(f"Database connection failed: {str(e)}")
+
+def is_valid_email(email):
+    return re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email) is not None
 
 # Smart hints based on question topic and difficulty
 HINTS = {
@@ -97,12 +114,19 @@ def viva_page():
 
 # ─── AUTH ─────────────────────────────────────────────
 @app.route("/api/login", methods=["POST"])
+@limiter.limit("5 per minute")
 def login():
     data = request.get_json()
     if not data:
         return jsonify({"success": False, "message": "Invalid request."})
     email = data.get("email", "").strip()
     password = data.get("password", "").strip()
+
+    if not email or not is_valid_email(email):
+        return jsonify({"success": False, "message": "Please enter a valid email address."})
+    if not password:
+        return jsonify({"success": False, "message": "Please enter your password."})
+
     try:
         db = get_db()
         cursor = db.cursor()
@@ -117,28 +141,42 @@ def login():
             return jsonify({"success": True})
         return jsonify({"success": False, "message": "Invalid email or password."})
     except Exception as e:
-        return jsonify({"success": False, "message": "Database error: " + str(e)})
+        print(f"Login error: {e}")  # log server-side only, never expose to client
+        return jsonify({"success": False, "message": "Something went wrong. Please try again."})
 
 @app.route("/api/signup", methods=["POST"])
+@limiter.limit("5 per minute")
 def signup():
     data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Invalid request."})
     name = data.get("name", "").strip()
     email = data.get("email", "").strip()
     password = data.get("password", "").strip()
-    if not name or not email or not password:
-        return jsonify({"success": False, "message": "All fields are required."})
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("SELECT id FROM students WHERE email=%s", (email,))
-    existing = cursor.fetchone()
-    if existing:
+
+    if not name:
+        return jsonify({"success": False, "message": "Please enter your full name."})
+    if not email or not is_valid_email(email):
+        return jsonify({"success": False, "message": "Please enter a valid email address."})
+    if not password or len(password) < 4:
+        return jsonify({"success": False, "message": "Password must be at least 4 characters."})
+
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT id FROM students WHERE email=%s", (email,))
+        existing = cursor.fetchone()
+        if existing:
+            db.close()
+            return jsonify({"success": False, "message": "Email already registered. Please login."})
+        cursor.execute("INSERT INTO students (name, email, password) VALUES (%s, %s, %s)",
+                   (name, email, generate_password_hash(password)))
+        db.commit()
         db.close()
-        return jsonify({"success": False, "message": "Email already registered. Please login."})
-    cursor.execute("INSERT INTO students (name, email, password) VALUES (%s, %s, %s)",
-               (name, email, generate_password_hash(password)))
-    db.commit()
-    db.close()
-    return jsonify({"success": True})
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"Signup error: {e}")
+        return jsonify({"success": False, "message": "Something went wrong. Please try again."})
 
 @app.route("/api/results", methods=["GET"])
 def get_results():
