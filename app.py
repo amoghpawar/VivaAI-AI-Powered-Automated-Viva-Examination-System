@@ -38,6 +38,15 @@ def get_db():
 def is_valid_email(email):
     return re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", email) is not None
 
+def login_required(f):
+    from functools import wraps
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if "student_id" not in session:
+            return jsonify({"success": False, "message": "Please log in first."}), 401
+        return f(*args, **kwargs)
+    return wrapper
+
 # Smart hints based on question topic and difficulty
 HINTS = {
 
@@ -179,10 +188,9 @@ def signup():
         return jsonify({"success": False, "message": "Something went wrong. Please try again."})
 
 @app.route("/api/results", methods=["GET"])
+@login_required
 def get_results():
-    student_id = session.get("student_id")
-    if not student_id:
-        return jsonify({"success": False, "message": "Not logged in."})
+    student_id = session["student_id"]
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
@@ -203,13 +211,18 @@ def logout():
     return redirect("/login")
 
 @app.route("/api/set_subject", methods=["POST"])
+@login_required
 def set_subject():
     data = request.get_json()
-    session["subject"] = data["subject"]
+    subject = data.get("subject")
+    if subject not in ("ML", "DBMS", "OOP", "OS"):
+        return jsonify({"success": False, "message": "Invalid subject."})
+    session["subject"] = subject
     return jsonify({"success": True})
 
 # ─── QUESTIONS ────────────────────────────────────────
 @app.route("/question", methods=["GET"])
+@login_required
 def get_question():
     subject = session.get("subject", "ML")
     db = get_db()
@@ -221,6 +234,7 @@ def get_question():
     return jsonify(q)
 
 @app.route("/hint", methods=["POST"])
+@login_required
 def get_hint():
     data = request.get_json()
     qid = data.get("question_id")
@@ -240,6 +254,7 @@ def get_hint():
     return jsonify({"hint": hint})
 
 @app.route("/submit_answer", methods=["POST"])
+@login_required
 def submit_answer():
     # Rate limiting — max 1 submission per 2 seconds per student
     last_submit = session.get("last_submit_time", 0)
@@ -255,7 +270,7 @@ def submit_answer():
     qid = data.get("question_id")
     hint_used = data.get("hint_used", False)
     subject = session.get("subject", "ML")
-    student_id = session.get("student_id", 1)
+    student_id = session["student_id"]  # guaranteed present by @login_required
 
     db = get_db()
     cursor = db.cursor()
