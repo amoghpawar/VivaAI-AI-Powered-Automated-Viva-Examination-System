@@ -1,22 +1,24 @@
+import os
 import time
+import re
+from dotenv import load_dotenv
+load_dotenv()
 from flask import Flask, request, jsonify, render_template, session, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 from ai_engine import evaluate_answer
-import mysql.connector
-import re
+import psycopg2
+import psycopg2.extras
 
 app = Flask(__name__)
-app.secret_key = "vivaai_2024_secret"
+app.secret_key = os.environ.get("SECRET_KEY", "vivaai_2024_secret")
 
 def get_db():
     try:
-        return mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="root",
-            database="vivaai"
+        return psycopg2.connect(
+            os.environ.get("DATABASE_URL"),
+            cursor_factory=psycopg2.extras.RealDictCursor
         )
-    except mysql.connector.Error as e:
+    except Exception as e:
         raise ConnectionError(f"Database connection failed: {str(e)}")
 
 # Smart hints based on question topic and difficulty
@@ -103,7 +105,7 @@ def login():
     password = data.get("password", "").strip()
     try:
         db = get_db()
-        cursor = db.cursor(dictionary=True)
+        cursor = db.cursor()
         cursor.execute("SELECT * FROM students WHERE email=%s", (email,))
         student = cursor.fetchone()
         db.close()
@@ -126,7 +128,7 @@ def signup():
     if not name or not email or not password:
         return jsonify({"success": False, "message": "All fields are required."})
     db = get_db()
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor()
     cursor.execute("SELECT id FROM students WHERE email=%s", (email,))
     existing = cursor.fetchone()
     if existing:
@@ -144,7 +146,7 @@ def get_results():
     if not student_id:
         return jsonify({"success": False, "message": "Not logged in."})
     db = get_db()
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor()
     cursor.execute("""
         SELECT q.topic, q.difficulty, a.classification, a.score
         FROM answers a
@@ -173,9 +175,9 @@ def set_subject():
 def get_question():
     subject = session.get("subject", "ML")
     db = get_db()
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor()
     cursor.execute("""SELECT * FROM questions WHERE subject=%s AND difficulty='Easy'
-                      ORDER BY RAND() LIMIT 1""", (subject,))
+                      ORDER BY RANDOM() LIMIT 1""", (subject,))
     q = cursor.fetchone()
     db.close()
     return jsonify(q)
@@ -185,7 +187,7 @@ def get_hint():
     data = request.get_json()
     qid = data.get("question_id")
     db = get_db()
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor()
     cursor.execute("SELECT topic, difficulty FROM questions WHERE id=%s", (qid,))
     row = cursor.fetchone()
     db.close()
@@ -218,7 +220,7 @@ def submit_answer():
     student_id = session.get("student_id", 1)
 
     db = get_db()
-    cursor = db.cursor(dictionary=True)
+    cursor = db.cursor()
 
     cursor.execute("SELECT ideal_answer, topic, difficulty FROM questions WHERE id=%s", (qid,))
     row = cursor.fetchone()
@@ -244,17 +246,17 @@ def submit_answer():
 
     if classification == "Weak":
         cursor.execute("""SELECT * FROM questions WHERE subject=%s AND topic=%s AND difficulty='Easy' AND id!=%s
-                          ORDER BY RAND() LIMIT 1""", (subject, row["topic"], qid))
+                          ORDER BY RANDOM() LIMIT 1""", (subject, row["topic"], qid))
     elif classification == "Average":
         cursor.execute("""SELECT * FROM questions WHERE subject=%s AND topic=%s AND difficulty='Medium' AND id!=%s
-                          ORDER BY RAND() LIMIT 1""", (subject, row["topic"], qid))
+                          ORDER BY RANDOM() LIMIT 1""", (subject, row["topic"], qid))
     else:
         cursor.execute("""SELECT * FROM questions WHERE subject=%s AND topic!=%s AND difficulty='Hard' AND id!=%s
-                          ORDER BY RAND() LIMIT 1""", (subject, row["topic"], qid))
+                          ORDER BY RANDOM() LIMIT 1""", (subject, row["topic"], qid))
 
     next_q = cursor.fetchone()
     if not next_q:
-        cursor.execute("SELECT * FROM questions WHERE subject=%s AND id!=%s ORDER BY RAND() LIMIT 1",
+        cursor.execute("SELECT * FROM questions WHERE subject=%s AND id!=%s ORDER BY RANDOM() LIMIT 1",
                        (subject, qid))
         next_q = cursor.fetchone()
 
@@ -265,9 +267,9 @@ def submit_answer():
         "next_question": next_q
     })
 
-if __name__ == "__main__":
-    app.run(debug=True)
- 
 @app.errorhandler(ConnectionError)
 def db_connection_error(e):
     return jsonify({"success": False, "message": "Service temporarily unavailable. Please try again later."}), 503
+
+if __name__ == "__main__":
+    app.run(debug=True)
