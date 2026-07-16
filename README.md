@@ -8,7 +8,9 @@
 
 **VivaAI** is a web-based, AI-powered viva (oral exam) simulation system. It evaluates free-text student answers using NLP techniques — TF-IDF vectorization and cosine similarity — and adapts question difficulty in real time based on performance, similar to how a real examiner probes deeper on strong answers and eases up on weak ones.
 
-**🔗 Live Demo:** [vivaai-amogh.vercel.app](https://vivaai-amogh.vercel.app)
+**What makes it different:** unlike a static quiz app, VivaAI evaluates *how you phrase* your answer using NLP similarity scoring — not just whether you picked the right option — and dynamically adjusts question difficulty in real time, the way a real examiner would.
+
+🔗 **Live Demo:** [vivaai-amogh.vercel.app](https://vivaai-amogh.vercel.app)
 
 ---
 
