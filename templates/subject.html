@@ -2,65 +2,225 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VivaAI – Choose Subject</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
+    :root {
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --border: #E5E7EB;
+      --text: #111827;
+      --text-secondary: #6B7280;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #eee; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-    .card { background: #1a1a2e; padding: 2.5rem; border-radius: 14px; width: 500px; max-width: 95vw; box-shadow: 0 0 40px #0008; text-align: center; }
-    h1 { color: #7eb8f7; margin-bottom: 0.5rem; }
-    .welcome { color: #888; margin-bottom: 2rem; font-size: 0.95rem; }
-    .subjects { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; }
-    .subject-card { background: #111; border: 2px solid #333; border-radius: 12px; padding: 2rem 1.5rem; cursor: pointer; width: 200px; transition: all 0.2s; }
-    .subject-card:hover { border-color: #3a86ff; background: #161630; transform: translateY(-3px); }
-    .subject-card .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    .subject-card h3 { color: #fff; margin-bottom: 0.4rem; }
-    .subject-card p { color: #888; font-size: 0.8rem; }
-    .logout { margin-top: 2rem; color: #555; font-size: 0.85rem; cursor: pointer; }
-    .logout:hover { color: #f87171; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left { display: flex; align-items: center; gap: 10px; }
+    .logo-mark { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+    .logo-text { font-weight: 700; font-size: 1rem; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .user-chip { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--text-secondary); }
+    .avatar { width: 30px; height: 30px; border-radius: 50%; background: #DBEAFE; color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; }
+    .logout-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; background: none;
+      font-family: 'Inter', sans-serif; transition: background 150ms ease;
+    }
+    .logout-btn:hover { background: #F1F5F9; }
+
+    .container { max-width: 1000px; margin: 0 auto; padding: 48px 32px; }
+    .page-heading { margin-bottom: 32px; }
+    .page-heading h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+    .page-heading p { color: var(--text-secondary); font-size: 0.95rem; }
+
+    .subjects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .subject-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .subject-card:hover { border-color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .subject-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    .subject-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: #DBEAFE; color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .subject-card h3 { font-size: 1.02rem; font-weight: 600; }
+    .subject-card .desc { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4; min-height: 34px; }
+
+    .subject-meta {
+      display: flex; gap: 14px; font-size: 0.78rem; color: var(--text-secondary);
+      border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px;
+    }
+    .subject-meta span { display: flex; align-items: center; gap: 4px; }
+
+    .start-btn {
+      margin-top: 4px;
+      width: 100%;
+      padding: 9px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: background 150ms ease;
+    }
+    .start-btn:hover { background: var(--primary-hover); }
+
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
 </head>
 <body>
-<div class="card">
-  <h1>🎓 VivaAI</h1>
-  <p class="welcome">Welcome, <b style="color:#7eb8f7">{{ name }}</b>! Choose your subject to begin.</p>
-  <div class="subjects">
-    <div class="subject-card" onclick="selectSubject('ML')">
-      <div class="icon">🤖</div>
-      <h3>Machine Learning</h3>
-      <p>Basics to advanced ML concepts</p>
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="logo-mark"><i data-lucide="graduation-cap" style="width:18px;height:18px;"></i></div>
+      <span class="logo-text">VivaAI</span>
     </div>
-    <div class="subject-card" onclick="selectSubject('DBMS')">
-      <div class="icon">🗄️</div>
-      <h3>DBMS</h3>
-      <p>Database fundamentals & SQL</p>
+    <div class="nav-right">
+      <div class="user-chip">
+        <div class="avatar">{{ name[0]|upper }}</div>
+        {{ name }}
+      </div>
+      <button class="logout-btn" onclick="window.location='/api/logout'">
+        <i data-lucide="log-out" style="width:14px;height:14px;"></i>
+        Log out
+      </button>
     </div>
-    <div class="subject-card" onclick="selectSubject('OS')">
-      <div class="icon">💻</div>
-      <h3>Operating System</h3>
-      <p>Processes, Memory, Scheduling & Deadlocks</p>
+  </nav>
+
+  <div class="container">
+    <div class="page-heading">
+      <h1>Choose a subject</h1>
+      <p>Select a topic to begin your adaptive viva assessment.</p>
     </div>
-    <div class="subject-card" onclick="selectSubject('CN')">
-      <div class="icon">🌐</div>
-      <h3>Computer Networks</h3>
-      <p>OSI, TCP/IP, Protocols & Security</p>
-    </div>
-    <div class="subject-card" onclick="selectSubject('OOP')">
-      <div class="icon">🧩</div>
-      <h3>OOP</h3>
-      <p>Classes, Inheritance, Polymorphism & Design Patterns</p>
+
+    <div class="subjects">
+      <div class="subject-card" onclick="selectSubject('ML')" tabindex="0" role="button">
+        <div class="subject-icon"><i data-lucide="brain-circuit" style="width:22px;height:22px;"></i></div>
+        <h3>Machine Learning</h3>
+        <p class="desc">Basics to advanced ML concepts</p>
+        <div class="subject-meta">
+          <span><i data-lucide="bar-chart-3" style="width:13px;height:13px;"></i>Beginner–Advanced</span>
+          <span><i data-lucide="list-checks" style="width:13px;height:13px;"></i>5 questions</span>
+          <span><i data-lucide="clock" style="width:13px;height:13px;"></i>~10 min</span>
+        </div>
+        <button class="start-btn" onclick="event.stopPropagation(); selectSubject('ML')">
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>Start assessment
+        </button>
+      </div>
+
+      <div class="subject-card" onclick="selectSubject('DBMS')" tabindex="0" role="button">
+        <div class="subject-icon"><i data-lucide="database" style="width:22px;height:22px;"></i></div>
+        <h3>DBMS</h3>
+        <p class="desc">Database fundamentals and SQL</p>
+        <div class="subject-meta">
+          <span><i data-lucide="bar-chart-3" style="width:13px;height:13px;"></i>Beginner–Advanced</span>
+          <span><i data-lucide="list-checks" style="width:13px;height:13px;"></i>5 questions</span>
+          <span><i data-lucide="clock" style="width:13px;height:13px;"></i>~10 min</span>
+        </div>
+        <button class="start-btn" onclick="event.stopPropagation(); selectSubject('DBMS')">
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>Start assessment
+        </button>
+      </div>
+
+      <div class="subject-card" onclick="selectSubject('OS')" tabindex="0" role="button">
+        <div class="subject-icon"><i data-lucide="cpu" style="width:22px;height:22px;"></i></div>
+        <h3>Operating System</h3>
+        <p class="desc">Processes, memory, scheduling and deadlocks</p>
+        <div class="subject-meta">
+          <span><i data-lucide="bar-chart-3" style="width:13px;height:13px;"></i>Beginner–Advanced</span>
+          <span><i data-lucide="list-checks" style="width:13px;height:13px;"></i>5 questions</span>
+          <span><i data-lucide="clock" style="width:13px;height:13px;"></i>~10 min</span>
+        </div>
+        <button class="start-btn" onclick="event.stopPropagation(); selectSubject('OS')">
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>Start assessment
+        </button>
+      </div>
+
+      <div class="subject-card" onclick="selectSubject('CN')" tabindex="0" role="button">
+        <div class="subject-icon"><i data-lucide="network" style="width:22px;height:22px;"></i></div>
+        <h3>Computer Networks</h3>
+        <p class="desc">OSI, TCP/IP, protocols and security</p>
+        <div class="subject-meta">
+          <span><i data-lucide="bar-chart-3" style="width:13px;height:13px;"></i>Beginner–Advanced</span>
+          <span><i data-lucide="list-checks" style="width:13px;height:13px;"></i>5 questions</span>
+          <span><i data-lucide="clock" style="width:13px;height:13px;"></i>~10 min</span>
+        </div>
+        <button class="start-btn" onclick="event.stopPropagation(); selectSubject('CN')">
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>Start assessment
+        </button>
+      </div>
+
+      <div class="subject-card" onclick="selectSubject('OOP')" tabindex="0" role="button">
+        <div class="subject-icon"><i data-lucide="shapes" style="width:22px;height:22px;"></i></div>
+        <h3>OOP</h3>
+        <p class="desc">Classes, inheritance, polymorphism and design patterns</p>
+        <div class="subject-meta">
+          <span><i data-lucide="bar-chart-3" style="width:13px;height:13px;"></i>Beginner–Advanced</span>
+          <span><i data-lucide="list-checks" style="width:13px;height:13px;"></i>5 questions</span>
+          <span><i data-lucide="clock" style="width:13px;height:13px;"></i>~10 min</span>
+        </div>
+        <button class="start-btn" onclick="event.stopPropagation(); selectSubject('OOP')">
+          <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>Start assessment
+        </button>
+      </div>
     </div>
   </div>
-  <p class="logout" onclick="window.location='/api/logout'">Logout</p>
-</div>
+
 <script>
-async function selectSubject(subject) {
-  await fetch("/api/set_subject", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ subject })
+  lucide.createIcons();
+
+  async function selectSubject(subject) {
+    await fetch("/api/set_subject", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ subject })
+    });
+    window.location = "/viva";
+  }
+
+  document.querySelectorAll('.subject-card').forEach(card => {
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+    });
   });
-  window.location = "/viva";
-}
 </script>
 </body>
 </html>

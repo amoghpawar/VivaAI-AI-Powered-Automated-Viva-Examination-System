@@ -2,174 +2,362 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VivaAI – Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <style>
+    :root {
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --success: #16A34A;
+      --warning: #D97706;
+      --danger: #DC2626;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --border: #E5E7EB;
+      --text: #111827;
+      --text-secondary: #6B7280;
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --space-6: 48px;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #0f0f1a; color: #eee; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-    .card { background: #1a1a2e; padding: 2.5rem; border-radius: 14px; width: 420px; max-width: 95vw; box-shadow: 0 0 40px #0008; }
-    .logo { text-align: center; margin-bottom: 1.5rem; }
-    .logo h1 { font-size: 2rem; color: #7eb8f7; }
-    .logo p { color: #888; font-size: 0.9rem; margin-top: 0.3rem; }
-    .tabs { display: flex; margin-bottom: 1.5rem; border-bottom: 2px solid #333; }
-    .tab { flex: 1; padding: 0.6rem; text-align: center; cursor: pointer; color: #888; font-size: 0.95rem; transition: all 0.2s; }
-    .tab.active { color: #7eb8f7; border-bottom: 2px solid #7eb8f7; margin-bottom: -2px; font-weight: bold; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    .layout { display: flex; width: 100%; min-height: 100vh; }
+
+    .illustration-panel {
+      flex: 1;
+      background: linear-gradient(180deg, #EFF4FF 0%, #F8FAFC 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: var(--space-6);
+      border-right: 1px solid var(--border);
+    }
+
+    .illustration-panel svg { width: 220px; height: 220px; }
+
+    .illustration-copy { margin-top: var(--space-4); text-align: center; max-width: 340px; }
+    .illustration-copy h2 { font-size: 1.25rem; font-weight: 600; color: var(--text); margin-bottom: var(--space-1); }
+    .illustration-copy p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+
+    .form-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--space-4); }
+    .auth-card { width: 100%; max-width: 400px; }
+
+    .logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-4); }
+    .logo-mark { width: 36px; height: 36px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+    .logo-text { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+
+    .heading h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+    .heading p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-3); }
+
+    .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: var(--space-3); }
+    .tab {
+      padding: var(--space-1) var(--space-1) 12px;
+      margin-right: var(--space-3);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 150ms ease, border-color 150ms ease;
+    }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
     .form-section { display: none; }
     .form-section.active { display: block; }
-    label { font-size: 0.85rem; color: #aaa; display: block; margin-bottom: 0.3rem; margin-top: 1rem; }
-    input { width: 100%; padding: 0.75rem; background: #111; color: #eee; border: 1px solid #333; border-radius: 8px; font-size: 1rem; }
-    input:focus { outline: none; border-color: #3a86ff; }
-    input[type="password"] { user-select: none; }
-    button { width: 100%; padding: 0.8rem; margin-top: 1.5rem; background: #3a86ff; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: bold; border-radius: 8px; }
-    button:hover { background: #265dcb; }
-    #login-msg, #signup-msg { text-align: center; margin-top: 1rem; font-size: 0.9rem; min-height: 1.2rem; }
-    .error { color: #f87171; }
-    .success { color: #4ade80; }
-    .hint { text-align: center; color: #555; font-size: 0.8rem; margin-top: 1rem; border-top: 1px solid #222; padding-top: 1rem; }
-    .hint b { color: #7eb8f7; }
+
+    .field { margin-bottom: var(--space-2); }
+    .field label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+
+    .input-wrap { position: relative; }
+    .input-wrap svg.icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--text-secondary); pointer-events: none; }
+
+    input {
+      width: 100%;
+      padding: 10px 12px 10px 40px;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    input::placeholder { color: #9CA3AF; }
+    input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+    .row-between { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); font-size: 0.85rem; }
+    .remember { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); }
+    .remember input[type="checkbox"] { width: 15px; height: 15px; padding: 0; accent-color: var(--primary); }
+    .forgot-link { color: var(--primary); text-decoration: none; font-weight: 500; }
+    .forgot-link:hover { text-decoration: underline; }
+
+    button.submit {
+      width: 100%;
+      padding: 11px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 150ms ease;
+    }
+    button.submit:hover { background: var(--primary-hover); }
+    button.submit:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    #login-msg, #signup-msg { text-align: center; margin-top: var(--space-2); font-size: 0.85rem; min-height: 1.2rem; }
+    .error { color: var(--danger); }
+    .success { color: var(--success); }
+
+    @media (max-width: 860px) {
+      .illustration-panel { display: none; }
+      .form-panel { padding: var(--space-3); }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
 </head>
 <body>
-<div class="card">
-  <div class="logo">
-    <h1>🎓 VivaAI</h1>
-    <p>AI-Based Viva Examination System</p>
+<div class="layout">
+
+  <div class="illustration-panel" aria-hidden="true">
+    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="70" width="140" height="100" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+      <rect x="45" y="90" width="60" height="8" rx="4" fill="#93C5FD"/>
+      <rect x="45" y="106" width="90" height="8" rx="4" fill="#93C5FD"/>
+      <rect x="45" y="122" width="40" height="8" rx="4" fill="#93C5FD"/>
+      <path d="M100 20L180 55L100 90L20 55L100 20Z" fill="#2563EB"/>
+      <path d="M55 62V90C55 90 75 105 100 105C125 105 145 90 145 90V62" stroke="#1D4ED8" stroke-width="3" fill="none"/>
+      <circle cx="175" cy="55" r="3" fill="#1D4ED8"/>
+      <line x1="175" y1="55" x2="175" y2="82" stroke="#1D4ED8" stroke-width="2"/>
+    </svg>
+    <div class="illustration-copy">
+      <h2>AI-Based Viva Examination System</h2>
+      <p>Adaptive oral assessments with automated NLP-based answer evaluation.</p>
+    </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('login')">Login</div>
-    <div class="tab" onclick="switchTab('signup')">Sign Up</div>
-  </div>
+  <div class="form-panel">
+    <div class="auth-card">
+      <div class="logo-row">
+        <div class="logo-mark"><i data-lucide="graduation-cap" style="width:20px;height:20px;"></i></div>
+        <span class="logo-text">VivaAI</span>
+      </div>
 
-  <!-- Login Form -->
-  <div class="form-section active" id="login-form">
-    <label>Email Address</label>
-    <input type="email" id="login-email" placeholder="Enter your email" />
-    <label>Password</label>
-    <input type="password" id="login-password" placeholder="Enter your password"
-           onkeydown="if(event.key==='Enter') login()"
-           onpaste="return false" oncopy="return false" oncut="return false"
-           autocomplete="off" /> 
-    <button onclick="login()">Login →</button>
-    <p id="login-msg"></p>
-  
-  </div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('login')">Login</div>
+        <div class="tab" onclick="switchTab('signup')">Sign Up</div>
+      </div>
 
-  <!-- Signup Form -->
-  <div class="form-section" id="signup-form">
-    <label>Full Name</label>
-    <input type="text" id="signup-name" placeholder="Enter your full name" />
-    <label>Email Address</label>
-    <input type="email" id="signup-email" placeholder="Enter your email" />
-    <label>Password</label>
-    <input type="password" id="signup-password" placeholder="Create a password"
-           onpaste="return false" oncopy="return false" oncut="return false"
-           autocomplete="new-password" />
-    <label>Confirm Password</label>
-    <input type="password" id="signup-confirm" placeholder="Confirm your password"
-           onkeydown="if(event.key==='Enter') signup()"
-           onpaste="return false" oncopy="return false" oncut="return false"
-           autocomplete="new-password" />
-    <button onclick="signup()">Create Account →</button>
-    <p id="signup-msg"></p>
+      <div class="form-section active" id="login-form">
+        <div class="heading">
+          <h1>Welcome back</h1>
+          <p>Sign in to continue your assessment.</p>
+        </div>
+
+        <div class="field">
+          <label for="login-email">Email</label>
+          <div class="input-wrap">
+            <svg class="icon" data-lucide="mail"></svg>
+            <input type="email" id="login-email" placeholder="you@example.com" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="login-password">Password</label>
+          <div class="input-wrap">
+            <svg class="icon" data-lucide="lock"></svg>
+            <input type="password" id="login-password" placeholder="Enter your password"
+                   onkeydown="if(event.key==='Enter') login()"
+                   onpaste="return false" oncopy="return false" oncut="return false"
+                   autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="row-between">
+          <label class="remember">
+            <input type="checkbox" id="remember-me" />
+            Remember me
+          </label>
+          <a href="#" class="forgot-link" onclick="return false;">Forgot password?</a>
+        </div>
+
+        <button class="submit" onclick="login()">
+          <i data-lucide="log-in" style="width:16px;height:16px;"></i>
+          Sign In
+        </button>
+        <p id="login-msg"></p>
+      </div>
+
+      <div class="form-section" id="signup-form">
+        <div class="heading">
+          <h1>Create your account</h1>
+          <p>Register to start your first assessment.</p>
+        </div>
+
+        <div class="field">
+          <label for="signup-name">Full Name</label>
+          <div class="input-wrap">
+            <svg class="icon" data-lucide="user"></svg>
+            <input type="text" id="signup-name" placeholder="Enter your full name" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="signup-email">Email</label>
+          <div class="input-wrap">
+            <svg class="icon" data-lucide="mail"></svg>
+            <input type="email" id="signup-email" placeholder="you@example.com" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="signup-password">Password</label>
+          <div class="input-wrap">
+            <svg class="icon" data-lucide="lock"></svg>
+            <input type="password" id="signup-password" placeholder="Create a password"
+                   onpaste="return false" oncopy="return false" oncut="return false"
+                   autocomplete="new-password" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="signup-confirm">Confirm Password</label>
+          <div class="input-wrap">
+            <svg class="icon" data-lucide="lock"></svg>
+            <input type="password" id="signup-confirm" placeholder="Confirm your password"
+                   onkeydown="if(event.key==='Enter') signup()"
+                   onpaste="return false" oncopy="return false" oncut="return false"
+                   autocomplete="new-password" />
+          </div>
+        </div>
+
+        <button class="submit" onclick="signup()">
+          <i data-lucide="user-plus" style="width:16px;height:16px;"></i>
+          Create Account
+        </button>
+        <p id="signup-msg"></p>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
-  document.querySelector(`.tab:${tab === 'login' ? 'first-child' : 'last-child'}`).classList.add('active');
-  document.getElementById(tab + '-form').classList.add('active');
-  document.getElementById('login-msg').textContent = '';
-  document.getElementById('signup-msg').textContent = '';
-}
+  lucide.createIcons();
 
-async function login() {
-  const email = document.getElementById("login-email").value.trim();
-  const password = document.getElementById("login-password").value.trim();
-  const msg = document.getElementById("login-msg");
-
-  // Validation
-  if (!email && !password) { msg.className = 'error'; msg.textContent = "⚠️ Please enter your email and password."; return; }
-  if (!email) { msg.className = 'error'; msg.textContent = "⚠️ Please enter your email address."; return; }
-  if (!validateEmail(email)) { msg.className = 'error'; msg.textContent = "⚠️ Please enter a valid email address."; return; }
-  if (!password) { msg.className = 'error'; msg.textContent = "⚠️ Please enter your password."; return; }
-
-  msg.className = ''; msg.textContent = "🔄 Logging in...";
-
-  try {
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    if (data.success) {
-      msg.className = 'success';
-      msg.textContent = "✅ Login successful! Redirecting...";
-      window.location.href = "/subject";
-    } else {
-      msg.className = 'error';
-      msg.textContent = "❌ " + data.message;
-    }
-  } catch(e) {
-    msg.className = 'error';
-    msg.textContent = "❌ Server error. Is Flask running?";
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+    document.querySelector(`.tab:${tab === 'login' ? 'first-child' : 'last-child'}`).classList.add('active');
+    document.getElementById(tab + '-form').classList.add('active');
+    document.getElementById('login-msg').textContent = '';
+    document.getElementById('signup-msg').textContent = '';
   }
-}
 
-function validateEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-async function signup() {
-  const name = document.getElementById("signup-name").value.trim();
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value.trim();
-  const confirm = document.getElementById("signup-confirm").value.trim();
-  const msg = document.getElementById("signup-msg");
-
-  // Validation — specific messages
-  if (!name) { msg.className = 'error'; msg.textContent = "⚠️ Please enter your full name."; return; }
-  if (!email) { msg.className = 'error'; msg.textContent = "⚠️ Please enter your email address."; return; }
-  if (!validateEmail(email)) { msg.className = 'error'; msg.textContent = "⚠️ Please enter a valid email (e.g. john@gmail.com)."; return; }
-  if (!password) { msg.className = 'error'; msg.textContent = "⚠️ Please create a password."; return; }
-  if (password.length < 4) { msg.className = 'error'; msg.textContent = "⚠️ Password must be at least 4 characters."; return; }
-  if (!confirm) { msg.className = 'error'; msg.textContent = "⚠️ Please confirm your password."; return; }
-  if (password !== confirm) { msg.className = 'error'; msg.textContent = "⚠️ Passwords do not match. Please try again."; return; }
-
-  msg.className = ''; msg.textContent = "🔄 Creating account...";
-
-  try {
-    const res = await fetch("/api/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
-    });
-    const data = await res.json();
-    if (data.success) {
-      msg.className = 'success';
-      msg.textContent = "✅ Account created! Switching to login...";
-      // Clear signup fields
-      document.getElementById("signup-name").value = "";
-      document.getElementById("signup-email").value = "";
-      document.getElementById("signup-password").value = "";
-      document.getElementById("signup-confirm").value = "";
-      setTimeout(() => {
-        switchTab('login');
-        document.getElementById("login-msg").className = 'success';
-        document.getElementById("login-msg").textContent = "✅ Account created! Please login.";
-      }, 800);
-    } else {
-      msg.className = 'error';
-      msg.textContent = "❌ " + data.message;
-    }
-  } catch(e) {
-    msg.className = 'error';
-    msg.textContent = "❌ Server error. Is Flask running?";
+  function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
-}
+
+  async function login() {
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value.trim();
+    const msg = document.getElementById("login-msg");
+
+    if (!email && !password) { msg.className = 'error'; msg.textContent = "Please enter your email and password."; return; }
+    if (!email) { msg.className = 'error'; msg.textContent = "Please enter your email address."; return; }
+    if (!validateEmail(email)) { msg.className = 'error'; msg.textContent = "Please enter a valid email address."; return; }
+    if (!password) { msg.className = 'error'; msg.textContent = "Please enter your password."; return; }
+
+    msg.className = ''; msg.textContent = "Signing in...";
+
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        msg.className = 'success';
+        msg.textContent = "Signed in. Redirecting...";
+        window.location.href = "/subject";
+      } else {
+        msg.className = 'error';
+        msg.textContent = data.message;
+      }
+    } catch(e) {
+      msg.className = 'error';
+      msg.textContent = "Connection error. Please try again.";
+    }
+  }
+
+  async function signup() {
+    const name = document.getElementById("signup-name").value.trim();
+    const email = document.getElementById("signup-email").value.trim();
+    const password = document.getElementById("signup-password").value.trim();
+    const confirm = document.getElementById("signup-confirm").value.trim();
+    const msg = document.getElementById("signup-msg");
+
+    if (!name) { msg.className = 'error'; msg.textContent = "Please enter your full name."; return; }
+    if (!email) { msg.className = 'error'; msg.textContent = "Please enter your email address."; return; }
+    if (!validateEmail(email)) { msg.className = 'error'; msg.textContent = "Please enter a valid email address."; return; }
+    if (!password) { msg.className = 'error'; msg.textContent = "Please create a password."; return; }
+    if (password.length < 4) { msg.className = 'error'; msg.textContent = "Password must be at least 4 characters."; return; }
+    if (!confirm) { msg.className = 'error'; msg.textContent = "Please confirm your password."; return; }
+    if (password !== confirm) { msg.className = 'error'; msg.textContent = "Passwords do not match."; return; }
+
+    msg.className = ''; msg.textContent = "Creating account...";
+
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (data.success) {
+        msg.className = 'success';
+        msg.textContent = "Account created. Switching to login...";
+        document.getElementById("signup-name").value = "";
+        document.getElementById("signup-email").value = "";
+        document.getElementById("signup-password").value = "";
+        document.getElementById("signup-confirm").value = "";
+        setTimeout(() => {
+          switchTab('login');
+          document.getElementById("login-msg").className = 'success';
+          document.getElementById("login-msg").textContent = "Account created. Please sign in.";
+        }, 800);
+      } else {
+        msg.className = 'error';
+        msg.textContent = data.message;
+      }
+    } catch(e) {
+      msg.className = 'error';
+      msg.textContent = "Connection error. Please try again.";
+    }
+  }
 </script>
 </body>
 </html>
