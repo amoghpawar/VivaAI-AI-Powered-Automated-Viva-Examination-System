@@ -177,9 +177,9 @@ function showAnalysis() {
         const icons = { Strong: "✅", Average: "🟠", Weak: "❌" };
         const hintBadge = r.hintUsed ? " <span style='color:#c4b5fd;font-size:0.75rem'>[hint used]</span>" : "";
         html += `
-        <div style="background:#111;padding:0.75rem;border-radius:8px;margin-bottom:0.5rem;border-left:3px solid ${colors[r.classification]}">
-            <b style="color:#fff">Q${i+1}:</b> ${r.question}<br>
-            <small style="color:#aaa">Your answer: ${r.answer}</small><br>
+        <div style=background:#ffffff;border:1px solid #e5e7eb;padding:0.75rem;border-radius:8px;margin-bottom:0.5rem;border-left:3px solid ${colors[r.classification]}">
+            <b style="color:#111827">Q${i+1}:</b> ${r.question}<br>
+            <small style="color:#6b7280">Your answer: ${r.answer}</small><br>
             <small>${icons[r.classification]} <b style="color:${colors[r.classification]}">${r.classification}</b> — Score: ${(r.score*100).toFixed(1)}%${hintBadge}</small>
         </div>`;
     });
@@ -323,3 +323,5 @@ function startMic() {
         if (e.error !== "aborted") alert("Mic error: " + e.error);
     };
 }
+
+
