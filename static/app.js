@@ -187,21 +187,22 @@ function showAnalysis() {
     html += `<h3 style="color:#7eb8f7;margin:1rem 0 0.75rem">🎯 Study Recommendations</h3>`;
 
     if (weak.length > 0) {
-        html += `<div style="background:#2a1a1a;padding:0.75rem;border-radius:8px;margin-bottom:0.5rem;border-left:3px solid #f87171">
-            <b style="color:#f87171">❌ Must Revise (Weak):</b><br>`;
-        weak.forEach(r => { html += `<small style="color:#eee">• <b>${r.question}</b> — Study this topic from basics</small><br>`; });
+        html += `<div style=background:#FEF2F2;padding:1rem;border-radius:10px;margin-bottom:0.75rem;
+border-left:4px solid #DC2626;padding:0.75rem;border-radius:8px;margin-bottom:0.5rem;border-left:3px solid #f87171">
+            <b style="color:#DC2626">❌ Must Revise (Weak):</b><br>`;
+        weak.forEach(r => { html += `<small style="color:#374151">• <b>${r.question}</b> — Study this topic from basics</small><br>`; });
         html += `</div>`;
     }
     if (average.length > 0) {
         html += `<div style="background:#2a1f1a;padding:0.75rem;border-radius:8px;margin-bottom:0.5rem;border-left:3px solid #fb923c">
             <b style="color:#fb923c">🟠 Can Improve (Average):</b><br>`;
-        average.forEach(r => { html += `<small style="color:#eee">• <b>${r.question}</b> — Practice with examples</small><br>`; });
+        average.forEach(r => { html += `<small style="color:#374151">• <b>${r.question}</b> — Practice with examples</small><br>`; });
         html += `</div>`;
     }
     if (strong.length > 0) {
         html += `<div style="background:#1a2a1a;padding:0.75rem;border-radius:8px;margin-bottom:0.5rem;border-left:3px solid #4ade80">
             <b style="color:#4ade80">✅ Well Done (Strong):</b><br>`;
-        strong.forEach(r => { html += `<small style="color:#eee">• <b>${r.question}</b> — Great answer!</small><br>`; });
+        strong.forEach(r => { html += `<small style="color:#374151">• <b>${r.question}</b> — Great answer!</small><br>`; });
         html += `</div>`;
     }
 
