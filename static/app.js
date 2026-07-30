@@ -212,11 +212,15 @@ function showAnalysis() {
             <button onclick="saveAsPDF()" style="flex:1;padding:0.8rem;font-size:1rem;background:#16a34a">📄 Save as PDF</button>
         </div>`;
 
-    document.querySelector(".card").innerHTML = html;
+    document.getElementById("question-box").style.display = "none";
+
+const report = document.getElementById("report-container");
+report.style.display = "block";
+report.innerHTML = html;
 }
 
 function saveAsPDF() {
-    const card = document.querySelector(".card");
+    const card = document.getElementById("report-container");
     const buttons = card.querySelector("div:last-child");
 
     // Hide buttons before printing
